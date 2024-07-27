@@ -1,0 +1,18 @@
+[
+    {
+        "model": "authentication.rol",
+        "pk": 1,
+        "fields": {
+            "rol_name": "Admin",
+            "is_admin": true
+        }
+    },
+    {
+        "model": "authentication.rol",
+        "pk": 2,
+        "fields": {
+            "rol_name": "Employee",
+            "is_admin": false
+        }
+    }
+]
