@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from supermarket.models.rol import Rol
+from administrator.models.rol import Rol
 
 class RolSerializer(serializers.ModelSerializer):
     class Meta:

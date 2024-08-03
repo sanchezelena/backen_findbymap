@@ -1,5 +1,5 @@
 from django.db import models
-from supermarket.models.employee import Employee
+from administrator.models.employee import Employee
 from supermarket.models.product import Product
 
 class Movements(models.Model):

@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from supermarket.models.rol import Rol
-from supermarket.serializers.rol import RolSerializer
+from administrator.models.rol import Rol
+from administrator.serializers.rol import RolSerializer
 
 class RolViewSet(viewsets.ModelViewSet):
     queryset = Rol.objects.all()
