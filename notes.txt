@@ -1,0 +1,108 @@
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
+
+DATABASE_URL = "mysql+aiomysql://username:password@localhost/dbname"
+
+engine = create_async_engine(DATABASE_URL, echo=True)
+async_session = sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
+
+async def get_db():
+    async with async_session() as session:
+        yield session
+
+
+
+
+pip install fastapi sqlalchemy databases aiomysql
+
+
+
+
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(length=50))
+    email = Column(String(length=100), unique=True, index=True)
+
+
+
+
+
+app.py
+
+from fastapi import FastAPI
+from app.routers import users, orders
+from app.models import user, order
+from app.database import engine
+
+app = FastAPI()
+
+@app.on_event("startup")
+async def startup():
+    async with engine.begin() as conn:
+        await conn.run_sync(user.Base.metadata.create_all)
+        await conn.run_sync(order.Base.metadata.create_all)
+
+app.include_router(users.router)
+app.include_router(orders.router)
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the FastAPI application"}
+2 unread messages
+
+
+controller user.py
+
+from typing import List
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from app.models.user import User
+from app.schemas.user import UserCreate
+from app.database import get_db
+from fastapi import Depends
+
+async def get_users(db: AsyncSession) -> List[User]:
+    result = await db.execute(select(User))
+    return result.scalars().all()
+
+async def create_user(user: UserCreate, db: AsyncSession) -> User:
+    new_user = User(**user.dict())
+    db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)
+    return new_user
+
+Daniel Oreste
+routes user.py
+
+from fastapi import APIRouter, Depends
+from typing import List
+from app.schemas.user import UserCreate, User
+from app.controllers import users
+from app.database import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
+
+router = APIRouter(
+    prefix="/users",
+    tags=["users"]
+)
+
+@router.get("/", response_model=List[User])
+async def read_users(db: AsyncSession = Depends(get_db)):
+    return await users.get_users(db)
+
+@router.post("/", response_model=User)
+async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
+    return await users.create_user(user, db)
+4 unread messages
