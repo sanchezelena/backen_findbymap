@@ -12,3 +12,6 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     offert = models.BooleanField(default=False)
     ubication_id = models.ForeignKey(Ubication, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.product_name

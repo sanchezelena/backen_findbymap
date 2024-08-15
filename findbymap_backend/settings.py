@@ -11,6 +11,14 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+if not OPENAI_API_KEY:
+    raise ValueError("La API Key de OpenAI no está configurada")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -77,6 +85,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "findbymap_backend.wsgi.application"
 
 
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -122,6 +131,7 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+AUTH_USER_MODEL = 'authentication.User'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -134,3 +144,6 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000", 
+]
